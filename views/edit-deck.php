@@ -44,7 +44,7 @@ tinymce.init( ajax_tinymce_init.mceInit[id] );
 					<div id="titlediv">
 						<div id="titlewrap">
 							<label for="name">Nom du slider</label>
-							<input type="text" name="title" size="40" maxlength="255" value="<?php echo !empty( $slidedeck['title'] ) ? $slidedeck['title'] : 'My SlideDeck'; ?>" id="title" />
+							<input type="text" name="title" size="40" maxlength="255" value="<?php echo !empty( $lmsliderdeck->posts[0]->post_title) ? $lmsliderdeck->posts[0]->post_title : 'My SlideDeck'; ?>" id="title" />
 						</div>
 					</div>
 				 
