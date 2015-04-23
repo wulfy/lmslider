@@ -260,6 +260,8 @@ function lmslider_action() {
                     
     	default:
     		$decks = lmslider_load_decks();
+            wp_register_style( 'lmslider-css', LM_PATH .'/lib/lmslider.css' , array(), LMSLIDER_VERSION, "screen" );
+    wp_enqueue_style( 'lmslider-css' );
     		include( lmslider_dir( '/views/overview.php' ) );
     }
 
