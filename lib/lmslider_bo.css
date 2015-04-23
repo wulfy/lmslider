@@ -1,0 +1,38 @@
+.addButton{
+border: 1px solid grey;
+background-color: grey;
+box-shadow: 2px 2px 0px rgb(170, 170, 170);
+text-align: center;
+width: 200px;
+height: 20px;
+}
+
+.addButton:hover{
+ box-shadow: 5px 5px 0px rgb(170, 170, 170);
+}
+
+.addButton a{
+ text-decoration: none;
+ color: white;
+}
+
+#lmslider_decks tr:nth-child(odd){
+	background-color: white;
+}
+
+#lmslider_decks th{
+	background-color:black;
+	color: white;
+	text-transform: uppercase;
+	width:200px;
+}
+
+#lmslider_decks td{
+	padding : 15px;
+	text-align: center;
+}
+
+#lmslider_decks{
+	width: 100%;
+	padding-right: 20px;
+}

@@ -260,8 +260,10 @@ function lmslider_action() {
                     
     	default:
     		$decks = lmslider_load_decks();
-            wp_register_style( 'lmslider-css', LM_PATH .'/lib/lmslider.css' , array(), LMSLIDER_VERSION, "screen" );
-    wp_enqueue_style( 'lmslider-css' );
+            wp_register_style( 'lmslider-bo-css', LM_PATH .'/lib/lmslider_bo.css' , array(), LMSLIDER_VERSION, "screen" );
+            wp_enqueue_style( 'lmslider-bo-css' );
+             wp_register_script( 'lmslider-bo-js', LM_PATH .'/lib/lmslider_bo.js' , array(), LMSLIDER_VERSION, "screen" );
+            wp_enqueue_script( 'lmslider-bo-js' );
     		include( lmslider_dir( '/views/overview.php' ) );
     }
 
