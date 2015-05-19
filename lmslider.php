@@ -3,7 +3,7 @@
  * Plugin Name: lmslider
  * Plugin URI: 
  * Description: Slider for lm securite website
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: LLA
  * Author URI: 
  * License: GPL2
@@ -400,11 +400,16 @@ add_filter('the_content', 'rewriteURL');
 function rewriteURL($content) {
     $check = preg_match( '/href="http[^\s]+.pdf"/', $content, $matches );
     $pdfurl = $matches[0];
-    $encodedUrl = split('"',$matches[0])[1];
-    $replaceUrl = 'href="http://localhost/wordpress/pdfviewer/?pdfurl='.urlencode($encodedUrl).'"';
+    $encodedUrl = split('"',$pdfurl);
+    $encodedUrl = $encodedUrl[1];
+    
+    if(!wp_is_mobile())
+    {
+        $replaceUrl = 'href="/wordpress/pdfviewer/?pdfurl='.urlencode($encodedUrl).'"';
 
-    if($check === 1)
-       $content =  str_replace($pdfurl, $replaceUrl, $content);
+        if($check === 1)
+            $content =  str_replace($pdfurl, $replaceUrl, $content);
+    }
     
     return $content;
 }
