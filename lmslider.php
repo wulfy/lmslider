@@ -406,7 +406,7 @@ function rewriteURL($content) {
     if(!wp_is_mobile())
     {
         //$replaceUrl = 'href="'.get_permalink(get_page_by_title( 'pdfviewer' )).'?pdfurl='.urlencode($encodedUrl).'"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gnome-mime-application-pdf.svg/40px-Gnome-mime-application-pdf.svg.png"/>';
-        $replaceUrl = "style='vertical-align: middle;' target='_new' ".$pdfurl.'<img style="width=40px;vertical-align: middle;" src="https://cdn3.iconfinder.com/data/icons/line-icons-set/128/1-02-128.png"/>';
+        $replaceUrl = "style='vertical-align: middle;' target='_new' ".$pdfurl.'<img style="width:40px;vertical-align: middle;" src="https://cdn3.iconfinder.com/data/icons/line-icons-set/128/1-02-128.png"/>';
 
         if($check === 1)
             $content =  str_replace($pdfurl, $replaceUrl, $content);
