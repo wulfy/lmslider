@@ -21,9 +21,12 @@ define( 'LM_PATH',                  get_bloginfo( 'wpurl' ) .'/wp-content/plugin
 add_action( 'admin_menu', 'lmslider_menu' );
 add_action( 'wp_ajax_lmslider_add_slide', 'lmslider_add_slide' );
 add_shortcode( 'lmslider', 'lmslider_display' );
+add_shortcode( 'pdfdisplay', 'pdf_display' );
 add_action( 'admin_init', 'lmslider_addbuttons' );
  add_action( 'admin_footer', 'lmslider_tinymce_plugin_dialog' );
 
+
+//installation du plugin
 function lmslider_install() {
 	global $wpdb;
 
@@ -51,6 +54,7 @@ function lmslider_install() {
 	dbDelta( $sql2 );*/
 }
 
+//retourne le répertoire du plugin
 function lmslider_dir( $str="" ) {
     $path =  WP_PLUGIN_DIR . "/" . basename( dirname( __FILE__ ) );
     
@@ -62,12 +66,15 @@ function lmslider_dir( $str="" ) {
     }
 }
 
+//liste les sliders (animations)
 function lmslider_list(){
 	$decks = lmslider_load_decks();
 	include( lmslider_dir( '/views/overview.php' ) );
 
 }
 
+//sauvegarde un slider (animation)
+//chaque slide est contituée de "post", le slider est lui même un post (parent des slides)
 function lmslider_save_deck($post_params = null){
 
 	if( !isset( $post_params ) ) {
@@ -83,13 +90,14 @@ function lmslider_save_deck($post_params = null){
                     'post_type' => LMSLIDER_DECK_POST_TYPE
                 );
 
+    //si un deckid est défini alors MAJ du slider
     if(isset($post_params['deckid']))
     {
         $deck_id = $post_params['deckid'];
         $deck_data['ID'] = $deck_id;
         wp_update_post($deck_data);
     } else
-    {
+    {//sinon on créé un nouveau slider
         $deck_id = wp_insert_post($deck_data);
     }
 
@@ -103,7 +111,7 @@ function lmslider_save_deck($post_params = null){
                     'post_type' => LMSLIDER_DECK_POST_TYPE
                 ) );*/
 
-
+    //créé un post par slide
     foreach ( (array) $post_params['slide'] as $slide ) {
 
                     $slide_data = array(
@@ -117,6 +125,7 @@ function lmslider_save_deck($post_params = null){
                         'post_type' => LMSLIDER_SLIDE_POST_TYPE
                     );
 
+                    //si slideID défini c'est une édition
                     if(isset($slide['id']))
                     {
                         $slide_id = $slide['id'];
@@ -141,6 +150,7 @@ function lmslider_save_deck($post_params = null){
                 return $deck_id ;
 }
 
+//supprimer un slider
 function lmslider_delete_deck($deckid){
 
     if(lmslider_delete_slides($deckid))
@@ -148,6 +158,8 @@ function lmslider_delete_deck($deckid){
 
 }
 
+//supprime les slides d'un slider si pas d'id de slide fourni
+//sinon supprime la slide correspondante
 function lmslider_delete_slides($deckid,$slideid =null){
 
     $slides = lmslider_load_slides($deckid);
@@ -172,6 +184,7 @@ function lmslider_delete_slides($deckid,$slideid =null){
 
 }
 
+//retourne un tableau de posts correspondants à la liste des slides d'un slider
 function lmslider_load_slides ($deckid){
 
 $query_params = array(
@@ -188,6 +201,8 @@ $query_params = array(
 
 }
 
+//retourne la liste des slider
+//ou le slider correspondant à l'ID fourni
 function lmslider_load_decks($deckid = null) {
 
 	$query_params = array(
@@ -208,7 +223,8 @@ function lmslider_load_decks($deckid = null) {
 }
 
 
-
+//effectue une action selon celle demandée via URL
+//route les actions d'administration du slider
 function lmslider_action() {
 
 	$currentAction = null;
@@ -271,6 +287,7 @@ function lmslider_action() {
 
 }
 
+//ajoute une slide
 function lmslider_add_slide() {
     
     $count = $_POST['count'] + 1;    
@@ -279,10 +296,12 @@ function lmslider_add_slide() {
     wp_die();
 }
 
+//ajoute le menu lmslider qui permet d'administrer les sliders
 function lmslider_menu() {
     add_menu_page( 'LmSlider', 'LmSlider', 'publish_posts', basename( __FILE__ ), 'lmslider_action' );
 }
 
+//affiche le slider via shortcode 
 function lmslider_display($atts){
     wp_register_script( 'mixit-library-js', LM_PATH . '/lib/jquery.mixitup.min.js' , array( 'jquery' ), LMSLIDER_VERSION );
     wp_register_script( 'animation-js', LM_PATH .  '/lib/animation.js' , array( 'jquery','mixit-library-js' ), LMSLIDER_VERSION );
@@ -297,7 +316,7 @@ function lmslider_display($atts){
 
     $template = "";
 
-    $template .= '<div id="Container">';
+    $template .= '<div id="lm_animate_Container"><div id="Container">';
     $count = 1;
     foreach((array) $slides as $slide )
     {
@@ -307,13 +326,14 @@ function lmslider_display($atts){
         $count ++;
     }
             
-    $template .= '</div>';
+    $template .= '</div></div>';
 
     return $template;
 
 
 }
 
+//charge la boite de dialogue pour choisir un slider
 function lmslider_tinymce_plugin_dialog() {
     // Only load the necessary scripts and render the modal window dialog box if the user is on the post/page editing admin pages
     if ( in_array( basename( $_SERVER['PHP_SELF'] ), array( 'post-new.php', 'page-new.php', 'post.php', 'page.php' ) ) ) {
@@ -323,6 +343,7 @@ function lmslider_tinymce_plugin_dialog() {
     }
 }
 
+//ajoute les bouton a l editeur tinymce (icone d ajout de slider)
 function lmslider_addbuttons() {
 
     // Setup the stylesheet to use for the modal window interaction
@@ -349,6 +370,7 @@ function lmslider_addbuttons() {
     }
 }
 
+//charge le script JS afin d'afficher la popup et insérer les sliders
 function lmslider_add_tinymce_plugin( $plugin_array ) {
     if(!lmslider_is_plugin())
         $plugin_array['lmslider'] = LM_PATH.'/lib/editor-plugin.js';
@@ -357,6 +379,7 @@ function lmslider_add_tinymce_plugin( $plugin_array ) {
     return $plugin_array;
 }
 
+
 function lmslider_register_button( $buttons ) {
     array_push( $buttons, "separator", "lmslider" );
     return $buttons;
@@ -364,4 +387,37 @@ function lmslider_register_button( $buttons ) {
 
 function lmslider_is_plugin() {
     return (boolean) ( ( "admin.php" == basename( $_SERVER['PHP_SELF'] ) ) && ( strpos( $_GET['page'], basename( __FILE__ ) ) !== false ) );
+}
+
+
+/******
+reecriture des URLs pour afficher PDF dans iframe
+utilise un shortcode dans une page nommée pdfviewer
+****/
+add_filter('the_content', 'rewriteURL');
+
+//reecrit les URLs .pdf automatiquement pour appeler la page d affichage
+function rewriteURL($content) {
+    $check = preg_match( '/href="http[^\s]+.pdf">/', $content, $matches );
+    $pdfurl = $matches[0];
+    $encodedUrl = split('"',$pdfurl)[1];
+
+    if(!wp_is_mobile())
+    {
+        //$replaceUrl = 'href="'.get_permalink(get_page_by_title( 'pdfviewer' )).'?pdfurl='.urlencode($encodedUrl).'"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gnome-mime-application-pdf.svg/40px-Gnome-mime-application-pdf.svg.png"/>';
+        $replaceUrl = "target='_new' ".$pdfurl.'<img src="https://cdn3.iconfinder.com/data/icons/line-icons-set/128/1-02-128.png"/>';
+        if($check === 1)
+            $content =  str_replace($pdfurl, $replaceUrl, $content);
+    }
+    
+    return $content;
+}
+
+//affiche une iframe par shortcode pour afficher le PDF
+function pdf_display($atts) {
+    $pdfUrl = $_GET["pdfurl"];
+
+    $template = "<iframe width='99%' height='900px' src='$pdfUrl'></iframe>";
+
+    return $template;
 }
