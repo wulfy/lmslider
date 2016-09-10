@@ -400,7 +400,7 @@ add_filter('the_content', 'rewriteURL');
 function rewriteURL($content) {
     $check = preg_match( '/href="http[^\s]+.pdf">/', $content, $matches );
     $pdfurl = $matches[0];
-    $encodedUrl = split('"',$pdfurl)[1];
+    $encodedUrl = explode('"',$pdfurl)[1];
     $encodedUrl = $encodedUrl[1];
 
     if(!wp_is_mobile())
